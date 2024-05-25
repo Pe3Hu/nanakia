@@ -1,0 +1,9 @@
+res://scene/4/area.tscn
+res://scene/4/garrison.tscn
+res://scene/4/area.gd
+res://scene/4/region.tscn
+res://scene/2/mainland.gd
+res://script/Classes.gd
+res://script/Global.gd
+res://scene/2/mainland.tscn
+res://scene/2/planet.tscn
