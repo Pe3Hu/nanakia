@@ -15,10 +15,14 @@ func _ready() -> void:
 func _input(event) -> void:
 	if event is InputEventKey:
 		match event.keycode:
-			KEY_SPACE:
+			KEY_A:
 				if event.is_pressed() && !event.is_echo():
 					var planet = sketch.universe.planets.get_child(0)
-					planet.moon.follow_phase()
+					planet.mainland.shift_layer(-1)
+			KEY_D:
+				if event.is_pressed() && !event.is_echo():
+					var planet = sketch.universe.planets.get_child(0)
+					planet.mainland.shift_layer(1)
 
 
 

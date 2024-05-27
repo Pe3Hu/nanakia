@@ -10,7 +10,6 @@ class State:
 	var vassals = []
 	var neighbors = []
 	var senor = null
-	var hub = null
 	var capital = null
 	var realm = null
 
@@ -29,26 +28,23 @@ class State:
 		
 		index = Global.num.index.state[type]
 		Global.num.index.state[type] += 1
-		limit = 3
+		limit = int(Global.num.state.n)
 		
 		if type == "earldom":
 			take_area(input_.area)
 		else:
 			take_state(input_.state)
-			
+		
 		fill_to_limit()
 
 
 	func take_area(area_: Polygon2D) -> void:
-		if !areas.has(area_):
-			areas.append(area_)
-			area_.state[type] = self
-			
-			if areas.size() > limit:
-				limit = areas.size()
-			
-			if limit == 4:
-				split_earldom()
+		if areas.size() < limit:
+			if !areas.has(area_):
+				areas.append(area_)
+				area_.state[type] = self
+		else:
+			pass
 
 
 	func split_earldom() -> void:
@@ -78,31 +74,27 @@ class State:
 	func detach_area(area_: Polygon2D) -> void:
 		areas.erase(area_)
 		area_.state[type] = null
-		limit = areas.size()
 
 
 	func take_state(state_: State) -> void:
-		if !vassals.has(state_):
-			vassals.append(state_)
-			state_.senor = self
-			
-			for area in state_.areas:
-				areas.append(area)
-				area.state[type] = self
-			
-			if vassals.size() > limit:
-				limit = vassals.size()
-			
-			var notify_senor = senor
-			
-			while notify_senor != null:
+		if vassals.size() < limit:
+			if !vassals.has(state_):
+				vassals.append(state_)
+				state_.senor = self
+				
 				for area in state_.areas:
-					senor.areas.append(area)
+					areas.append(area)
+					area.state[type] = self
 				
-				notify_senor = notify_senor.senor
+				var notify_senor = senor
 				
-			if limit == 4 and type != "empire":
-				split_senor()
+				while notify_senor != null:
+					for area in state_.areas:
+						senor.areas.append(area)
+					
+					notify_senor = notify_senor.senor
+		else:
+			pass
 
 
 	func split_senor() -> void:
@@ -134,8 +126,6 @@ class State:
 		for area in state_.areas:
 			area.state[type] = null
 		
-		limit = vassals.size()
-		
 		var notify_senor = senor
 		
 		while notify_senor != null:
@@ -143,34 +133,51 @@ class State:
 				senor.areas.erase(area)
 			
 			notify_senor = notify_senor.senor
-	 
+ 
 
 	func fill_to_limit() -> void:
 		if type == "earldom":
-			while areas.size() < limit:
+			while areas.size() < limit and !mainland.reset:
 				encroach_area()
 		else:
-			while vassals.size() < limit:
+			while vassals.size() < limit and !mainland.reset:
 				encroach_state()
 
 
 	func encroach_area() -> void:
 		var accessible_areas = get_accessible_areas()
 		
-		if accessible_areas.is_empty():
-			limit = areas.size()
-		else:
-			var area = accessible_areas.pick_random()
+		if !accessible_areas.is_empty():
+			var weights = {}
+			var minimum = 8
+			
+			for area in accessible_areas:
+				if !weights.has(area):
+					weights[area] = area.get_neighbor_areas_without_state(type).size()
+					
+					if minimum > weights[area]:
+						minimum = weights[area]
+			
+			var options = []
+		
+			for area in weights:
+				if weights[area] == minimum:
+					options.append(area)
+			
+			var area = options.pick_random()
 			take_area(area)
+		else:
+			limit = areas.size()
+			pass
 
 
 	func get_accessible_areas() -> Array:
 		var accessible_areas = []
 		
 		for area in areas:
-			for neighbor in area.neighbors:
-				if neighbor.state[type] == null and !accessible_areas.has(neighbor):
-					accessible_areas.append(neighbor)
+			for neighbor_area in area.areas:
+				if neighbor_area.state[type] == null and !accessible_areas.has(neighbor_area):
+					accessible_areas.append(neighbor_area)
 		
 		return accessible_areas
 
@@ -179,10 +186,7 @@ class State:
 		var accessible_vassals = get_accessible_vassals()
 		
 		if accessible_vassals.is_empty():
-			limit = vassals.size()
-			
-			if limit == 1:
-				var a = null
+			mainland.reset = true
 		else:
 			var vassal = accessible_vassals.pick_random()
 			take_state(vassal)
@@ -228,21 +232,6 @@ class State:
 			neighbor_state_.queue_free()
 
 
-	func init_hub() -> void:
-		var input = {}
-		input.type = "hub"
-		input.mainland = mainland
-		input.position = Vector2()
-		
-		for area in areas:
-			input.position += area.lair.position
-		
-		input.position /= areas.size()
-		hub = Global.scene.knob.instantiate()
-		mainland.knobs.add_child(hub)
-		hub.set_attributes(input)
-
-
 	func find_nearest_empire() -> MarginContainer:
 		var datas = []
 		
@@ -250,7 +239,7 @@ class State:
 			if empire != areas.front().state["empire"]:
 				var data = {}
 				data.empire = empire
-				data.d = hub.position.distance_to(empire.hub.position)
+				#data.d = hub.position.distance_to(empire.hub.position)
 				datas.append(data)
 		
 		datas.sort_custom(func(a, b): return a.d < b.d)
@@ -284,3 +273,14 @@ class State:
 	#func paint_areas(color_: Color) -> void:
 		#for area in areas:
 			#area.paint_flaps(color_)
+
+
+	func crush() -> void:
+		mainland.states.erase(self)
+		var states = mainland.get(type+"s")
+		states.erase(self)
+		
+		Global.num.index.state[type] -= 1
+		
+		for area in areas:
+			area.state[type] = null

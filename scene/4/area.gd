@@ -10,7 +10,6 @@ var neighbors = {}
 var trails = {}
 var areas = {}
 var directions = {}
-var region = null
 var remoteness = {}
 
 var state = {}
@@ -38,6 +37,7 @@ func init_basic_setting() -> void:
 			state[key] = null
 	
 	set_vertexs()
+	set_remoteness()
 
 
 func set_vertexs() -> void:
@@ -56,23 +56,19 @@ func set_vertexs() -> void:
 	garrison.position = vertexs[3]
 
 
-func set_region(region_: Node2D) -> void:
-	if region != null:
-		region.areas.erase(self)
-	
-	region = region_
-	region.areas.append(self)
-	
-	paint_to_match("region")
+func set_remoteness() -> void:
+	var x = abs(Global.num.mainland.col / 2 - grid.x)
+	var y = abs(Global.num.mainland.row / 2 - grid.y)
+	remoteness.center = x + y
 
 
-func paint_to_match(layer_: String) -> void:
-	match layer_:
-		"region":
-			color = Global.color.region[region.type]
-		"wilderness":
-			var v = 1 - float(remoteness.settlement) / Global.num.remoteness.danger
-			color = Color.from_hsv(0, 0, v)
+
+func paint_based_on_garrison_index() -> void:
+	var h = float(garrison.index.get_value()) / Global.num.index.area
+	var s = 0.75
+	var v = 1
+	var color_ = Color.from_hsv(h,s,v)
+	set_color(color_)
 
 
 func paint_based_on_state_type_index(type_: String) -> void:
@@ -82,8 +78,6 @@ func paint_based_on_state_type_index(type_: String) -> void:
 		var v = 1
 		var color_ = Color.from_hsv(h,s,v)
 		set_color(color_)
-		
-		state[type_].hub.visible = true
 	else:
 		paint_gray()
 
@@ -104,3 +98,13 @@ func get_trails_around_socket_perimeter() -> Array:
 
 	var _trails = mainland.get_trails_based_on_areas(_areas)
 	return _trails
+
+
+func get_neighbor_areas_without_state(type_: String) -> Array:
+	var result = []
+	
+	for area in areas:
+		if area.state[type_] == null:
+			result.append(area)
+	
+	return result

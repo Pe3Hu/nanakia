@@ -29,7 +29,7 @@ func init_arr() -> void:
 	arr.state = ["earldom", "dukedom", "kingdom", "empire"]
 	
 	arr.layer = {}
-	arr.layer.mainland = ["area", "earldom", "dukedom", "kingdom", "empire", "realm"]
+	arr.layer.mainland = ["area", "earldom", "dukedom", "kingdom"]
 
 
 func init_num() -> void:
@@ -49,13 +49,16 @@ func init_num() -> void:
 	num.garrison.r = num.garrison.a * sqrt(2)
 	
 	num.mainland = {}
-	num.mainland.n = 8
+	num.mainland.n = 9
 	num.mainland.col = num.mainland.n
 	num.mainland.row = num.mainland.n
 	num.mainland.a = num.garrison.a * 2.5
 	
 	num.area = {}
 	num.area.nesw = 4
+	
+	num.state = {}
+	num.state.n = 3
 	
 	num.trail = {}
 	num.trail.min = 3

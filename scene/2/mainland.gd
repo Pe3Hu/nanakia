@@ -19,6 +19,7 @@ var empires = []
 var layer = 0
 var corners = {}
 var liberty = null
+var reset = false
 #endregion
 
 
@@ -43,15 +44,9 @@ func init_basic_setting() -> void:
 	#policy.init_communities()
 	#paint_areas("region")
 	
-	layer = 1
+	layer = Global.arr.state[2]
 	shift_layer(0)
 	
-	
-	#for area in areas.get_children():
-		#var n = area.remoteness.center
-		#var h = 1 - float(n) / (Global.num.area.n- 1)
-		#area.color = Color.from_hsv(h, 1.0, 1.0)
-		
 
 
 func init_offsets() -> void:
@@ -337,20 +332,33 @@ func init_states() -> void:
 	
 	for key in Global.arr.state:
 		Global.num.index.state[key] = 0
-		
-	var type = Global.arr.state.front()
-	lay_foundation_of_states(type)
-	#spread_states(type)
-	#set_earldom_neighbors(type)
-	#
-	#for _i in range(1, Global.arr.state.size()):
-		#type = Global.arr.state[_i]
-		#lay_foundation_of_states(type)
-		#spread_states(type)
-		#set_state_neighbors(type)
-	#
+	
+	reinit_states()
+
+
+func reinit_states() -> void:
+	reset = false
+	reset_states()
+	
+	for type in Global.arr.state:
+		lay_foundation_of_states(type)
+		spread_states(type)
+		set_state_neighbors(type)
+	
+	if reset:
+		reinit_states()
+	
 	#absorb_smaller_empires()
 	#update_seam_boundaries()
+
+
+func reset_states() -> void:
+	for type in Global.arr.state:
+		var _states = get(type+"s")
+		
+		while !_states.is_empty():
+			var state = _states.front()
+			state.crush()
 
 
 func do_dukedom():
@@ -360,7 +368,9 @@ func do_dukedom():
 
 
 func lay_foundation_of_states(type_: String) -> void:
-	for area in corners.area:
+	if !reset:
+		#for area in corners.area:
+		var area = corners.area.pick_random()
 		var input = {}
 		input.mainland = self
 		input.type = type_
@@ -376,146 +386,148 @@ func lay_foundation_of_states(type_: String) -> void:
 
 
 func spread_states(type_: String) -> void:
-	if type_ == "earldom":
-		var end = add_new_earldom()
-		
-		while !end:
-			end = add_new_earldom()
-	else:
-		var end = add_new_senor(type_)
-		
-		while !end:
-			end = add_new_senor(type_)
+	if !reset:
+		if type_ == "earldom":
+			var end = add_new_earldom()
+			
+			while !end and !reset:
+				end = add_new_earldom()
+		else:
+			var end = add_new_senor(type_)
+			
+			while !end and !reset:
+				end = add_new_senor(type_)
 
 
 func add_new_earldom() -> bool:
 	var type = "earldom"
-	var undeveloped = []
-	var node = get(type+"s")
+	var undeveloped = {}
+	var extreme = {}
+	extreme.isolation = 8
+	extreme.edge = 0
+	var _states = get(type + "s")
 	
-	for state in node.get_children():
-		var accessible = state.get_accessible_areas()
-		undeveloped.append_array(accessible)
+	for state in _states:
+		var _areas = state.get_accessible_areas()
 	
-	if !undeveloped.is_empty():
+		for area in _areas:
+			if !undeveloped.has(area):
+				undeveloped[area] = area.get_neighbor_areas_without_state(type).size()
+				
+				if extreme.edge < area.remoteness.center:
+					extreme.edge = area.remoteness.center
+	
+	if !undeveloped.keys().is_empty():
+		var data = {}
+		data.edges = []
+		data.isolations = []
+		
+		for area in undeveloped:
+			if area.remoteness.center == extreme.edge:
+				data.edges.append(area)
+				
+				if extreme.isolation > undeveloped[area]:
+					extreme.isolation = undeveloped[area]
+		
+		for area in data.edges:
+			if undeveloped[area] == extreme.isolation:
+				data.isolations.append(area)
+		
 		var input = {}
 		input.type = type
 		input.mainland = self
-		var neighbors = {}
-		neighbors.accessible = []
-		neighbors.big = []
-		neighbors.small = []
-		input.area = undeveloped.pick_random()
-		
-		for seam in input.area.neighbors:
-			var neighbor = input.area.neighbors[seam]
-			
-			if neighbor.state[type] == null:
-				neighbors.accessible.append(neighbor)
-			else:
-				match neighbor.state[type].limit:
-					2:
-						neighbors.small.append(neighbor)
-					3:
-						neighbors.big.append(neighbor)
-		
-		if neighbors.accessible.is_empty():
-			var occupied_area = null
-			
-			if neighbors.small.is_empty():
-				if !neighbors.big.is_empty():
-					occupied_area = neighbors.big.pick_random()
-				else:
-					input.area.state[type] = liberty
-			else:
-				occupied_area = neighbors.small.pick_random()
-			
-			if occupied_area != null:
-				occupied_area.state[type].take_area(input.area)
-		else:
-			var state = Global.scene.state.instantiate()
-			node.add_child(state)
-			state.set_attributes(input)
+		input.area = data.isolations.pick_random()
+		var _state = Classes.State.new(input)
 		return false
 	
 	return true
 
 
 func add_new_senor(type_: String) -> bool:
-	var node = get(type_+"s")
-	var undeveloped = []
+	var _states = get(type_ + "s")
+	var undeveloped = {}
+	var extreme = {}
+	extreme.isolation = 8
+	extreme.edge = 0
 	
-	for state in node.get_children():
-		var accessible_vassals = state.get_accessible_vassals()
-		undeveloped.append_array(accessible_vassals)
+	for state in _states:
+		var _areas = state.get_accessible_areas()
 	
-	if !undeveloped.is_empty():
+		for area in _areas:
+			if !undeveloped.has(area):
+				undeveloped[area] = area.get_neighbor_areas_without_state(type_).size()
+				
+				if extreme.edge < area.remoteness.center:
+					extreme.edge = area.remoteness.center
+	
+	if !undeveloped.keys().is_empty():
+		var data = {}
+		data.isolations = []
+		data.edges = []
+		
+		for area in undeveloped:
+			if area.remoteness.center == extreme.edge:
+				data.edges.append(area)
+				
+				if extreme.isolation > undeveloped[area]:
+					extreme.isolation = undeveloped[area]
+		
+		for area in data.edges:
+			if undeveloped[area] == extreme.isolation:
+				data.isolations.append(area)
+		
 		var input = {}
 		input.type = type_
 		input.mainland = self
-		var neighbors = {}
-		neighbors.accessible = []
-		neighbors.big = []
-		neighbors.small = []
+		input.area = data.edges.pick_random()
 		
-		input.state = undeveloped.pick_random()
-		
-		for neighbor in input.state.neighbors:
-			if neighbor.senor == null and neighbor.type == input.state.type:
-				neighbors.accessible.append(neighbor)
-			else:
-				match neighbor.senor.limit:
-					2:
-						neighbors.small.append(neighbor.senor)
-					3:
-						neighbors.big.append(neighbor.senor)
-		
-		if neighbors.accessible.is_empty():# and (type_ != "empire" or empires.get_child_count() < Global.num.size.empire.limit):
-			var occupied_state = null
-			
-			if neighbors.small.is_empty():
-				if !neighbors.big.is_empty():
-					occupied_state = neighbors.big.pick_random()
-			else:
-				occupied_state = neighbors.small.pick_random()
-			
-			if occupied_state != null:
-				occupied_state.take_state(input.state)
-			else:
-				input.state.senor = liberty
-		else:
-			var state = Global.scene.state.instantiate()
-			node.add_child(state)
-			state.set_attributes(input)
-		
+		var index = Global.arr.state.find(type_) - 1
+		var vassal = Global.arr.state[index]
+		input.state = input.area.state[vassal]
+		var _state = Classes.State.new(input)
 		return false
 	
 	return true
 
 
-func set_earldom_neighbors(type_: String) -> void:
-	var node = get(type_+"s")
+func set_earldom_neighbors() -> void:
+	var type = "earldom"
+	var _states = get(type+"s")
 	
-	for state in node.get_children():
+	if _states.size() != 27:
+		#print("fail _states.size()")
+		reset = true
+		return
+	
+	for state in _states:
 		for area in state.areas:
-			for seam in area.neighbors:
-				var neighbor = area.neighbors[seam]
-				var neighbor_state = neighbor.state[type_]
+			for neighbor_area in area.areas:
+				if !state.areas.has(neighbor_area):
+					var neighbor_state = neighbor_area.state[type]
+					
+					if neighbor_state == null:
+						#print("fail neighbor_state")
+						reset = true
+						return
 				
-				if !state.neighbors.has(neighbor_state) and neighbor_state != state and neighbor_state != liberty:
-					state.neighbors.append(neighbor_state)
-					neighbor_state.neighbors.append(state)
+					if !state.neighbors.has(neighbor_state) and neighbor_state != liberty:
+						state.neighbors.append(neighbor_state)
+						neighbor_state.neighbors.append(state)
 
 
 func set_state_neighbors(type_: String) -> void:
-	var node = get(type_+"s")
-	
-	for state in node.get_children():
-		for vassal in state.vassals:
-			for neighbor in vassal.neighbors:
-				if neighbor.senor != null and neighbor.senor != liberty:
-					if !state.neighbors.has(neighbor.senor) and neighbor.senor != state and neighbor.senor.type == state.type:
-						state.neighbors.append(neighbor.senor)
+	if !reset:
+		if type_ == "earldom":
+			set_earldom_neighbors()
+		else:
+			var _states = get(type_+"s")
+			
+			for state in _states:
+				for vassal in state.vassals:
+					for neighbor in vassal.neighbors:
+						if neighbor.senor != null and neighbor.senor != liberty:
+							if !state.neighbors.has(neighbor.senor) and neighbor.senor != state and neighbor.senor.type == state.type:
+								state.neighbors.append(neighbor.senor)
 
 
 func expand_empires() -> void:
@@ -566,15 +578,15 @@ func shift_layer(shift_: int) -> void:
 	for area in areas.get_children():
 		match layer:
 			"area":
-				area.paint_based_on_index()
+				area.paint_based_on_garrison_index()
 			"earldom":
 				area.paint_based_on_state_type_index(layer)
-			#"dukedom":
-				#area.paint_based_on_state_type_index(layer)
-			#"kingdom":
-				#area.paint_based_on_state_type_index(layer)
-			#"empire":
-				#area.paint_based_on_state_type_index(layer)
+			"dukedom":
+				area.paint_based_on_state_type_index(layer)
+			"kingdom":
+				area.paint_based_on_state_type_index(layer)
+			"empire":
+				area.paint_based_on_state_type_index(layer)
 			#"realm":
 				#area.paint_based_on_terrain()
 				##area.paint_based_on_realm_terrain()
