@@ -16,6 +16,7 @@ var earldoms = []
 var dukedoms = []
 var kingdoms = []
 var empires = []
+var challenges = []
 var layer = 0
 var corners = {}
 var liberty = null
@@ -32,21 +33,16 @@ func set_attributes(input_: Dictionary) -> void:
 
 func init_basic_setting() -> void:
 	custom_minimum_size = Global.vec.size.mainland
-	policy = planet.policy
 	init_offsets()
 	init_areas()
 	init_trails()
 	
 	init_states()
-	
-	#init_regions()
-	#init_biomes()
-	#policy.init_communities()
-	#paint_areas("region")
+	refill_garrisons()
+	init_challenges()
 	
 	layer = Global.arr.state[2]
 	shift_layer(0)
-	
 
 
 func init_offsets() -> void:
@@ -276,6 +272,43 @@ func clear_redundant_trails() -> void:
 			#area.color = Color.BLACK
 
 
+func refill_garrisons() -> void:
+	for area in areas.get_children():
+		random_fill_garrison(area.garrison)
+
+
+func random_fill_garrison(garrison_: MarginContainer) -> void:
+	var limit = 30
+	var kinds = {}
+	
+	for type in Global.arr.garrison:
+		var options = Global.arr[type]
+		var kind = options.pick_random()
+		kinds[kind] = Global.arr.kind.find(kind) + 1
+		
+		if kind != "human":
+			garrison_.set_troop_value(kind, 0)
+	
+	while limit > 0:
+		var kind = kinds.keys().pick_random()#Global.get_random_key(kinds)
+		
+		if limit >= kinds[kind]:
+			limit -= kinds[kind]
+			garrison_.change_troop_value(kind, 1)
+		else:
+			kinds.erase(kind)
+		
+		#print([garrison_.index.get_value(), kind, limit])
+
+
+func init_challenges() -> void:
+	var input = {}
+	input.mainland = self
+	input.offensive = areas.get_child(0).garrison
+	input.defensive = areas.get_child(1).garrison
+	var _challenge = Classes.Challenge.new(input)
+
+
 func check_intersecting(first_: Polygon2D, second_: Polygon2D) -> bool:
 	var direction = second_.grid - first_.grid
 	var grid = first_.grid + Vector2i(direction.x, 0)
@@ -284,29 +317,6 @@ func check_intersecting(first_: Polygon2D, second_: Polygon2D) -> bool:
 	var second = grids[grid]
 	
 	return first.areas.has(second)
-
-
-func init_regions() -> void:
-	for type in Global.arr.region:
-		add_region(type)
-
-
-func add_region(type_: String) -> void:
-	var input = {}
-	input.mainland = self
-	input.type = type_
-	
-	var region = Global.scene.region.instantiate()
-	regions.add_child(region)
-	region.set_attributes(input)
-
-
-func get_region(windrose_: String) -> Variant:
-	for region in regions.get_children():
-		if region.type == windrose_:
-			return region
-	
-	return null
 
 
 func get_area_based_on_grid(grid_: Vector2i) -> Variant:

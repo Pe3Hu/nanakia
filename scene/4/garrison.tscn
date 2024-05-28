@@ -28,26 +28,20 @@ visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
 
-[node name="HBox" type="HBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="Index" parent="HBox" instance=ExtResource("2_cc6yj")]
-visible = false
-layout_mode = 2
-
-[node name="Troops" type="GridContainer" parent="HBox"]
+[node name="Troops" type="GridContainer" parent="."]
 layout_mode = 2
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 2
 
-[node name="Human" parent="HBox/Troops" instance=ExtResource("2_cc6yj")]
+[node name="Index" parent="Troops" instance=ExtResource("2_cc6yj")]
 layout_mode = 2
 
-[node name="Sky" parent="HBox/Troops" instance=ExtResource("2_cc6yj")]
+[node name="Human" parent="Troops" instance=ExtResource("2_cc6yj")]
 layout_mode = 2
 
-[node name="Ground" parent="HBox/Troops" instance=ExtResource("2_cc6yj")]
+[node name="Ground" parent="Troops" instance=ExtResource("2_cc6yj")]
+layout_mode = 2
+
+[node name="Sky" parent="Troops" instance=ExtResource("2_cc6yj")]
 layout_mode = 2

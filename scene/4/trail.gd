@@ -30,15 +30,15 @@ func init_basic_setting() -> void:
 func init_tokens() -> void:
 	var input = {}
 	input.proprietor = self
-	input.type = "index"
-	input.subtype = "trail"
+	input.type = "trail"
+	input.subtype = "index"
 	input.value = Global.num.index.trail
 	index.set_attributes(input)
 	Global.num.index.trail += 1
 	
 	input.proprietor = self
-	input.type = "index"
-	input.subtype = "trail"
+	input.type = "trail"
+	input.subtype = "index"
 	input.value = 0
 	first.set_attributes(input)
 	second.set_attributes(input)
@@ -62,7 +62,7 @@ func set_vertexs() -> void:
 	
 	for key in keys:
 		var token = get(key)
-		token.position -= index.custom_minimum_size * 0.5
+		token.position -= index.custom_minimum_size * 0.25
 
 
 func advance_status() -> void:

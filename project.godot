@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="blank graph v6"
+config/name="nanakia"
 run/main_scene="res://scene/0/game.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://asset/icon.svg"

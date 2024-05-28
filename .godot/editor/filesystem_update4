@@ -1,6 +1,6 @@
-res://scene/4/area.tscn
 res://scene/4/garrison.tscn
-res://scene/2/planet.tscn
 res://scene/2/mainland.tscn
-res://scene/0/game.gd
-res://scene/2/mainland.gd
+res://scene/5/encounter.tscn
+res://scene/5/pool.tscn
+res://scene/5/encounter.gd
+res://scene/5/pool.gd

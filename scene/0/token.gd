@@ -41,7 +41,6 @@ func init_basic_setting(input_: Dictionary) -> void:
 	
 	if input_.has("value"):
 		input.subtype = input_.value
-		
 	
 	value.set_attributes(input)
 	value.custom_minimum_size = Vector2(Global.vec.size.number)

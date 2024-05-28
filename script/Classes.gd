@@ -284,3 +284,22 @@ class State:
 		
 		for area in areas:
 			area.state[type] = null
+
+
+class Challenge:
+	var mainland = null
+	var offensive = null
+	var defensive = null
+	var trail = null
+
+
+	func _init(input_: Dictionary) -> void:
+		for key in input_:
+			set(key, input_[key])
+	
+		init_basic_setting()
+
+
+	func init_basic_setting() -> void:
+		mainland.challenges.append(self)
+		mainland.planet.encounter.set_challenge(self)

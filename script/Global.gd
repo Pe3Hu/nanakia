@@ -25,8 +25,15 @@ func _ready() -> void:
 func init_arr() -> void:
 	arr.region = ["ne", "se", "sw", "nw", "nesw"]
 	arr.terrain = ["swamp", "forest", "mountain", "plain"]
-	arr.garrison = ["human", "sky", "ground"]
+	arr.garrison = ["human", "ground", "sky"]
 	arr.state = ["earldom", "dukedom", "kingdom", "empire"]
+	arr.role = ["offensive", "defensive"]
+	
+	arr.human = ["human"]
+	arr.ground = ["ghost", "skeleton"]
+	arr.sky = ["werewolf", "vampire"]
+	arr.kind = ["human", "ghost", "skeleton", "werewolf", "vampire"]
+	arr.initiative = ["vampire", "werewolf", "skeleton", "ghost", "human"]
 	
 	arr.layer = {}
 	arr.layer.mainland = ["area", "earldom", "dukedom", "kingdom"]
@@ -76,7 +83,8 @@ func init_dict() -> void:
 	init_season()
 	init_area()
 	init_corner()
-	init_region()
+	
+	init_dice()
 
 
 func init_direction() -> void:
@@ -182,19 +190,43 @@ func init_corner() -> void:
 				dict.corner.vector[corners_][order_][_i] = vertex
 
 
-func init_region() -> void:
-	dict.region = {}
-	dict.region.corner = {}
-	dict.region.corner.ne = Vector2i(Global.num.mainland.col - 1, 0)
-	dict.region.corner.se = Vector2i(Global.num.mainland.col - 1, Global.num.mainland.row - 1)
-	dict.region.corner.sw = Vector2i(0, Global.num.mainland.row - 1)
-	dict.region.corner.nw = Vector2i(0, 0)
+func init_dice() -> void:
+	dict.dice = {}
+	dict.dice.kind = {}
+	var exceptions = ["kind"]
 	
-	dict.region.direction = {}
-	dict.region.direction.ne = Vector2i(-1, 1)
-	dict.region.direction.se = Vector2i(-1, -1)
-	dict.region.direction.sw = Vector2i(1, -1)
-	dict.region.direction.nw = Vector2i(1, 1)
+	var path = "res://asset/json/nanakia_dice.json"
+	var array = load_data(path)
+	
+	for dice in array:
+		var data = {}
+		
+		for key in dice:
+			if !exceptions.has(key) and dice[key] > 0:
+				data[int(key)] = dice[key]
+	
+		dict.dice.kind[dice.kind] = data
+		
+	dict.kind = {}
+	
+	dict.kind.troop = {}
+	dict.kind.troop["human"] = "human"
+	dict.kind.troop["ghost"] = "ground"
+	dict.kind.troop["skeleton"] = "ground"
+	dict.kind.troop["werewolf"] = "sky"
+	dict.kind.troop["vampire"] = "sky"
+	
+	dict.kind.facet = {}
+	dict.kind.facet["human"] = "finger"
+	dict.kind.facet["ghost"] = "glow"
+	dict.kind.facet["skeleton"] = "bone"
+	dict.kind.facet["werewolf"] = "claw"
+	dict.kind.facet["vampire"] = "fang"
+	
+	dict.role = {}
+	dict.role.opponent = {}
+	dict.role.opponent["offensive"] = "defensive"
+	dict.role.opponent["defensive"] = "offensive"
 
 
 func init_scene() -> void:
@@ -210,12 +242,9 @@ func init_scene() -> void:
 	
 	scene.area = load("res://scene/4/area.tscn")
 	scene.trail = load("res://scene/4/trail.tscn")
-	scene.region = load("res://scene/4/region.tscn")
-	scene.biome = load("res://scene/4/biome.tscn")
 	
-	scene.settlement = load("res://scene/5/settlement.tscn")
-	scene.community = load("res://scene/5/community.tscn")
-	scene.borderland = load("res://scene/5/borderland.tscn")
+	scene.dice = load("res://scene/5/dice.tscn")
+	scene.facet = load("res://scene/5/facet.tscn")
 	
 	
 
@@ -231,6 +260,13 @@ func init_vec():
 	
 	vec.size.garrison = Vector2.ONE * num.garrison.a
 	vec.size.mainland = vec.size.garrison * 2 + (Vector2(Global.num.mainland.col, Global.num.mainland.row) - Vector2.ONE) * num.mainland.a
+	
+	var n = 6
+	vec.size.mark = Vector2(vec.size.token) * 0.75
+	vec.size.power = Vector2(vec.size.token) * 0.75
+	vec.size.facet = vec.size.mark + vec.size.power * 0.75
+	vec.size.encounter = Vector2(vec.size.facet.x * (2 * n + 1), vec.size.facet.y * n)
+	
 	
 	init_window_size()
 
@@ -249,21 +285,6 @@ func init_color():
 	color.card.selected = {}
 	color.card.selected[true] = Color.from_hsv(160 / h, 0.4, 0.7)
 	color.card.selected[false] = Color.from_hsv(60 / h, 0.2, 0.9)
-	
-	color.indicator = {}
-	color.indicator.health = {}
-	color.indicator.health.fill = Color.from_hsv(0 / h, 0.9, 0.7)
-	color.indicator.health.background = Color.from_hsv(0 / h, 0.5, 0.9)
-	color.indicator.endurance = {}
-	color.indicator.endurance.fill = Color.from_hsv(270 / h, 0.9, 0.7)
-	color.indicator.endurance.background = Color.from_hsv(270 / h, 0.5, 0.9)
-	
-	color.region = {}
-	color.region.ne = Color.from_hsv(0 / h, 0.9, 0.9)
-	color.region.se = Color.from_hsv(72 / h, 0.9, 0.9)
-	color.region.sw = Color.from_hsv(144 / h, 0.9, 0.9)
-	color.region.nw = Color.from_hsv(216 / h, 0.9, 0.9)
-	color.region.nesw = Color.from_hsv(288 / h, 0.9, 0.9)
 	
 
 
@@ -315,57 +336,3 @@ func get_random_key(dict_: Dictionary):
 	
 	print("!bug! index_r error in get_random_key func")
 	return null
-
-
-func get_all_constituents_based_on_limit(array_: Array, limit_: int) -> Dictionary:
-	var constituents = {}
-	constituents[0] = []
-	constituents[1] = []
-	
-	for child in array_:
-		constituents[0].append(child)
-		
-		if child.value <= limit_:
-			constituents[1].append([child])
-	
-	for _i in array_.size()-2:
-		set_constituents_based_on_size_and_limit(constituents, _i+2, limit_)
-	
-	var value = 0
-	
-	for constituent in array_:
-		value += constituent.value
-	
-	if value <= limit_:
-		constituents[array_.size()] = [constituents[0]]
-	
-	constituents.erase(0)
-	
-	for _i in range(constituents.keys().size()-1,-1,-1):
-		var key = constituents.keys()[_i]
-		
-		if constituents[key].is_empty():
-			constituents.erase(key)
-	
-	return constituents
-
-
-func set_constituents_based_on_size_and_limit(constituents_: Dictionary, size_:int, limit_: int) -> void:
-	var parents = constituents_[size_-1]
-	constituents_[size_] = []
-	
-	for parent in parents:
-		var value = 0
-		
-		for constituent in parent:
-			value += constituent.value
-		
-		for child in constituents_[0]:
-			if !parent.has(child) and value + child.value <= limit_:
-				var constituent = []
-				constituent.append_array(parent)
-				constituent.append(child)
-				constituent.sort_custom(func(a, b): return constituents_[0].find(a) < constituents_[0].find(b))
-				
-				if !constituents_[size_].has(constituent):
-					constituents_[size_].append(constituent)

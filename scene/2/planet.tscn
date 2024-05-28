@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scene/2/planet.gd" id="1_ictb4"]
 [ext_resource type="PackedScene" uid="uid://dvdcoeutm1eo6" path="res://scene/8/moon.tscn" id="2_2t0bn"]
 [ext_resource type="PackedScene" uid="uid://cyy4x4c3v4kno" path="res://scene/2/mainland.tscn" id="2_7t4ix"]
-[ext_resource type="PackedScene" uid="uid://c6m1b4wqr3v3l" path="res://scene/5/policy.tscn" id="3_i0x4a"]
+[ext_resource type="PackedScene" uid="uid://cetpku1674nsq" path="res://scene/5/encounter.tscn" id="3_x5gtm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
 
@@ -37,7 +37,7 @@ alignment = 1
 [node name="Mainland" parent="HBox" instance=ExtResource("2_7t4ix")]
 layout_mode = 2
 
-[node name="Policy" parent="HBox" instance=ExtResource("3_i0x4a")]
+[node name="Encounter" parent="HBox" instance=ExtResource("3_x5gtm")]
 layout_mode = 2
 
 [node name="VBox" type="VBoxContainer" parent="HBox"]
