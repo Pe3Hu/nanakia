@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkjll6y43evur"]
+
+[ext_resource type="Script" path="res://scene/6/society.gd" id="1_txbn4"]
+[ext_resource type="PackedScene" uid="uid://bp48bk8465asf" path="res://scene/0/couple.tscn" id="2_blgv6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
+
+[node name="Society" type="MarginContainer"]
+custom_minimum_size = Vector2(5, 5)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_txbn4")
+
+[node name="BG" type="Panel" parent="."]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
+
+[node name="VBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Army" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Militia" parent="VBox/Army" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Ghost" parent="VBox/Army" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Skeleton" parent="VBox/Army" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Werewolf" parent="VBox/Army" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Vampire" parent="VBox/Army" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Civilian" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Aristocrat" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Peasant" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Beggar" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
+layout_mode = 2
+
+[node name="Slave" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
+layout_mode = 2

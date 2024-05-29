@@ -39,6 +39,7 @@ func init_basic_setting() -> void:
 	
 	init_states()
 	refill_garrisons()
+	refill_settlements()
 	init_challenges()
 	
 	layer = Global.arr.state[2]
@@ -284,7 +285,7 @@ func random_fill_garrison(garrison_: MarginContainer) -> void:
 	for type in Global.arr.garrison:
 		var options = Global.arr[type]
 		var kind = options.pick_random()
-		kinds[kind] = Global.arr.kind.find(kind) + 1
+		kinds[kind] = Global.arr.army.find(kind) + 1
 		
 		if kind != "human":
 			garrison_.set_troop_value(kind, 0)
@@ -301,12 +302,43 @@ func random_fill_garrison(garrison_: MarginContainer) -> void:
 		#print([garrison_.index.get_value(), kind, limit])
 
 
+func refill_settlements() -> void:
+	for state in earldoms:
+		random_fill_state_settlements(state)
+
+
+func random_fill_state_settlements(state_: Classes.State) -> void:
+	var limit = 100
+	var weights = {}
+	weights["aristocrat"] = 2
+	weights["peasant"] = 9
+	weights["beggar"] = 3
+	weights["slave"] = 1
+	var _areas = []
+	
+	while limit > 0:
+		if _areas.is_empty():
+			_areas.append_array(state_.areas)
+			_areas.shuffle()
+		
+		var area = _areas.pop_front()
+		var kind = Global.get_random_key(weights)
+		Global.rng.randomize()
+		var value = Global.rng.randi_range(1, ceil(float(limit) / 10))
+		area.settlement.change_resident_value(kind, value)
+		limit -= value
+	
+	for area in state_.areas:
+		while area.settlement.population * Global.num.settlement.aristocrat < area.settlement.aristocrat.get_value():
+			area.settlement.elevator("aristocrat", "peasant")
+
+
 func init_challenges() -> void:
 	var input = {}
 	input.mainland = self
 	input.offensive = areas.get_child(0).garrison
 	input.defensive = areas.get_child(1).garrison
-	var _challenge = Classes.Challenge.new(input)
+	#var _challenge = Classes.Challenge.new(input)
 
 
 func check_intersecting(first_: Polygon2D, second_: Polygon2D) -> bool:

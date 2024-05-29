@@ -35,19 +35,6 @@ func advance_random_card() -> void:
 	card.advance_area()
 
 
-func advance_card_based_on_prestige(type_: String) -> void:
-	refill_check()
-	var options = []
-	
-	for card in cards.get_children():
-		if card.prestige.type == type_:
-			options.append(card)
-	
-	var card = options.pick_random()
-	card.advance_area()
-	
-
-
 func advance_all_cards() -> void:
 	while cards.get_child_count() > 0:
 		advance_random_card()

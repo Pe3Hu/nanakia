@@ -1,5 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpsp5on2chw4s"]
+[gd_scene load_steps=4 format=3 uid="uid://bpsp5on2chw4s"]
 
+[ext_resource type="PackedScene" uid="uid://cijfgbdi8yqwa" path="res://scene/0/token.tscn" id="1_fi7dm"]
 [ext_resource type="Script" path="res://scene/3/card.gd" id="1_p3ovp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
@@ -24,3 +25,15 @@ script = ExtResource("1_p3ovp")
 [node name="BG" type="Panel" parent="."]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
+
+[node name="Cost" parent="." instance=ExtResource("1_fi7dm")]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Resources" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 0
+alignment = 1

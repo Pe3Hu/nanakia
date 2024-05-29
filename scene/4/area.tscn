@@ -1,14 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://go3djoslxcbd"]
+[gd_scene load_steps=4 format=3 uid="uid://go3djoslxcbd"]
 
 [ext_resource type="Script" path="res://scene/4/area.gd" id="1_5dsnu"]
 [ext_resource type="PackedScene" uid="uid://bq7jn6ea4awm" path="res://scene/4/garrison.tscn" id="2_carh3"]
+[ext_resource type="PackedScene" uid="uid://ceiuq7h8r5xwa" path="res://scene/4/settlement.tscn" id="3_t7dp6"]
 
 [node name="Area" type="Polygon2D"]
 script = ExtResource("1_5dsnu")
 
 [node name="Garrison" parent="." instance=ExtResource("2_carh3")]
-visible = true
 offset_left = 0.0
 offset_top = 0.0
 offset_right = 10.0
 offset_bottom = 10.0
+
+[node name="Settlement" parent="." instance=ExtResource("3_t7dp6")]
+visible = true

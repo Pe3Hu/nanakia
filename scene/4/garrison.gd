@@ -26,7 +26,7 @@ func init_basic_setting() -> void:
 func init_tokens() -> void:
 	var input = {}
 	input.proprietor = self
-	input.type = "garrison"
+	input.type = "army"
 	input.subtype = "index"
 	input.value = Global.num.index.area
 	index.set_attributes(input)
@@ -59,4 +59,10 @@ func change_troop_value(kind_: String, value_: int) -> void:
 		troop.set_value(0)
 	
 	troop.change_value(value_)
+
+
+func get_troop_value(kind_: String) -> int:
+	var type = Global.dict.kind.troop[kind_]
+	var troop = get(type)
+	return troop.get_value()
 #endregion

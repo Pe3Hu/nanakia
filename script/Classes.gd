@@ -303,3 +303,32 @@ class Challenge:
 	func init_basic_setting() -> void:
 		mainland.challenges.append(self)
 		mainland.planet.encounter.set_challenge(self)
+
+
+class Conqueror:
+	var god = null
+	var mainland = null
+	var areas = []
+
+
+	func _init(input_: Dictionary) -> void:
+		for key in input_:
+			set(key, input_[key])
+	
+		init_basic_setting()
+
+
+	func init_basic_setting() -> void:
+		pass
+
+
+	func annex_area(area_: Polygon2D) -> void:
+		area_.conqueror = self
+		areas.append(area_)
+		god.society.consider_area(1, area_)
+
+
+	func forfeit_area(area_: Polygon2D) -> void:
+		area_.conqueror = null
+		areas.erase(area_)
+		god.society.consider_area(-1, area_)

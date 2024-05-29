@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b6xt38h3tpi5k"]
+[gd_scene load_steps=6 format=3 uid="uid://b6xt38h3tpi5k"]
 
 [ext_resource type="Script" path="res://scene/1/god.gd" id="1_ceqed"]
 [ext_resource type="PackedScene" uid="uid://dtop6ce8ht5b" path="res://scene/3/gameboard.tscn" id="2_xx0x2"]
+[ext_resource type="PackedScene" uid="uid://bkjll6y43evur" path="res://scene/6/society.tscn" id="3_hhtwj"]
+[ext_resource type="PackedScene" uid="uid://blhi7tynl43q1" path="res://scene/6/storage.tscn" id="4_s6uhr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7paps"]
 
@@ -32,11 +34,16 @@ layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
+[node name="Gameboard" parent="HBox" instance=ExtResource("2_xx0x2")]
+layout_mode = 2
+
 [node name="VBox" type="VBoxContainer" parent="HBox"]
 layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Gameboard" parent="HBox/VBox" instance=ExtResource("2_xx0x2")]
-visible = false
+[node name="Society" parent="HBox/VBox" instance=ExtResource("3_hhtwj")]
+layout_mode = 2
+
+[node name="Storage" parent="HBox/VBox" instance=ExtResource("4_s6uhr")]
 layout_mode = 2

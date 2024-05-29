@@ -3,9 +3,11 @@ extends Polygon2D
 
 #region vars
 @onready var garrison = $Garrison
+@onready var settlement = $Settlement
 
 var mainland = null
 var grid = null
+var conqueror = null
 var neighbors = {}
 var trails = {}
 var areas = {}
@@ -32,6 +34,7 @@ func init_basic_setting() -> void:
 		var input = {}
 		input.area = self
 		garrison.set_attributes(input)
+		settlement.set_attributes(input)
 	
 		for key in Global.arr.state:
 			state[key] = null
@@ -60,7 +63,6 @@ func set_remoteness() -> void:
 	var x = abs(Global.num.mainland.col / 2 - grid.x)
 	var y = abs(Global.num.mainland.row / 2 - grid.y)
 	remoteness.center = x + y
-
 
 
 func paint_based_on_garrison_index() -> void:

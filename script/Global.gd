@@ -29,11 +29,16 @@ func init_arr() -> void:
 	arr.state = ["earldom", "dukedom", "kingdom", "empire"]
 	arr.role = ["offensive", "defensive"]
 	
-	arr.human = ["human"]
+	arr.human = ["militia"]
 	arr.ground = ["ghost", "skeleton"]
 	arr.sky = ["werewolf", "vampire"]
-	arr.kind = ["human", "ghost", "skeleton", "werewolf", "vampire"]
-	arr.initiative = ["vampire", "werewolf", "skeleton", "ghost", "human"]
+	arr.army = ["militia", "ghost", "skeleton", "werewolf", "vampire"]
+	arr.civilian = ["aristocrat", "peasant", "beggar", "slave"]
+	arr.initiative = ["vampire", "werewolf", "skeleton", "ghost", "militia"]
+	
+	arr.resource = ["peaceful", "lethal"]
+	arr.peaceful = ["prestige", "glory", "supply", "gold"]
+	arr.lethal = ["soul", "bone", "meat", "blood"]
 	
 	arr.layer = {}
 	arr.layer.mainland = ["area", "earldom", "dukedom", "kingdom"]
@@ -75,7 +80,7 @@ func init_num() -> void:
 	num.hand.n = 4
 	
 	num.settlement = {}
-	num.settlement.n = (arr.region.size() - 1) * 2
+	num.settlement.aristocrat = 1.0 / 10
 
 
 func init_dict() -> void:
@@ -210,14 +215,14 @@ func init_dice() -> void:
 	dict.kind = {}
 	
 	dict.kind.troop = {}
-	dict.kind.troop["human"] = "human"
+	dict.kind.troop["militia"] = "human"
 	dict.kind.troop["ghost"] = "ground"
 	dict.kind.troop["skeleton"] = "ground"
 	dict.kind.troop["werewolf"] = "sky"
 	dict.kind.troop["vampire"] = "sky"
 	
 	dict.kind.facet = {}
-	dict.kind.facet["human"] = "finger"
+	dict.kind.facet["militia"] = "finger"
 	dict.kind.facet["ghost"] = "glow"
 	dict.kind.facet["skeleton"] = "bone"
 	dict.kind.facet["werewolf"] = "claw"
@@ -267,6 +272,7 @@ func init_vec():
 	vec.size.facet = vec.size.mark + vec.size.power * 0.75
 	vec.size.encounter = Vector2(vec.size.facet.x * (2 * n + 1), vec.size.facet.y * n)
 	
+	vec.size.couple = Vector2(vec.size.token) * 0.75
 	
 	init_window_size()
 

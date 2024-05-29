@@ -67,13 +67,15 @@ func change_number(value_) -> void:
 	match typeof(subtype):
 		TYPE_INT:
 			value = int(subtype)
-			var suffix = ""
 			
-			while value >= 1000:
-				value /= 1000
-				suffix = Global.dict.thousand[suffix]
+			#if Global.dict.has("thousand"):
+				#var suffix = ""
+				#
+				#while value >= 1000:
+					#value /= 1000
+					#suffix = Global.dict.thousand[suffix]
 			
-			number.text = str(value) + suffix
+			number.text = str(value)# + suffix
 		TYPE_FLOAT:
 			value = float(subtype)
 			value = snapped(value, 0.1)

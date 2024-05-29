@@ -37,11 +37,13 @@ func add_god(god_: MarginContainer) -> void:
 	
 	gods.append(god_)
 	god_.planet = self
+	god_.conqueror.mainland = mainland
 #endregion
 
 
 func start_race() -> void:
 	init_gods_opponents()
+	init_gods_areas()
 	#roll_gods_order()
 	
 	#for god in gods:
@@ -66,3 +68,14 @@ func roll_gods_order() -> void:
 	moon.god = gods.pick_random()
 	var order = gods.find(moon.god) + 1
 	moon.order.set_value(order)
+
+
+func init_gods_areas() -> void:
+	var options = []
+	options.append_array(mainland.earldoms)
+	
+	for god in gods:
+		var earldom = options.pick_random()
+		options.erase(earldom)
+		var area = earldom.areas.pick_random()
+		god.conqueror.annex_area(area)

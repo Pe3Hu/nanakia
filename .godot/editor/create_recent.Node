@@ -1,6 +1,6 @@
-GridContainer
-VBoxContainer
 HBoxContainer
+VBoxContainer
+GridContainer
 Node2D
 Polygon2D
 MarginContainer
