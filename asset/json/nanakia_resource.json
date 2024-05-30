@@ -1,0 +1,121 @@
+[
+ {
+  "title": "prestige",
+  "type": "temporary",
+  "purpose": "hire",
+  "subtype": "servant",
+  "value": 1
+ },
+ {
+  "title": "supply",
+  "type": "temporary",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "gold",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "glory",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "soul",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "bone",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "meat",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "blood",
+  "type": "permanent",
+  "purpose": "hire",
+  "subtype": "warrior",
+  "value": 1
+ },
+ {
+  "title": "noble",
+  "type": "civilian",
+  "purpose": "income",
+  "subtype": "prestige",
+  "value": 1
+ },
+ {
+  "title": "peasant",
+  "type": "civilian",
+  "purpose": "income",
+  "subtype": "supply",
+  "value": 1
+ },
+ {
+  "title": "beggar",
+  "type": "civilian",
+  "purpose": "expense",
+  "subtype": "prestige",
+  "value": 0.1
+ },
+ {
+  "title": "slave",
+  "type": "civilian",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 0.5
+ },
+ {
+  "title": "militia",
+  "type": "army",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 1
+ },
+ {
+  "title": "ghost",
+  "type": "army",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 0
+ },
+ {
+  "title": "undead",
+  "type": "army",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 0
+ },
+ {
+  "title": "werewolf",
+  "type": "army",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 1.5
+ },
+ {
+  "title": "vampire",
+  "type": "army",
+  "purpose": "expense",
+  "subtype": "supply",
+  "value": 2
+ }
+]

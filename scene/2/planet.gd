@@ -26,6 +26,7 @@ func init_basic_setting() -> void:
 	moon.set_attributes(input)
 	encounter.set_attributes(input)
 	mainland.set_attributes(input)
+	moon.set_attributes(input)
 
 
 func add_god(god_: MarginContainer) -> void:
@@ -79,3 +80,9 @@ func init_gods_areas() -> void:
 		options.erase(earldom)
 		var area = earldom.areas.pick_random()
 		god.conqueror.annex_area(area)
+		
+		god.gameboard.refill_hand()
+		#god.steward.update_resources()
+	
+	mainland.layer.affiliation = "conqueror"
+	mainland.shift_layer("affiliation", 0)

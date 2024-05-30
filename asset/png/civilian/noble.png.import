@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6a5dq03ek16p"
-path="res://.godot/imported/index.png-0fb20c701b5325e331e37c07a635771a.ctex"
+uid="uid://cgamsnkpt77p7"
+path="res://.godot/imported/noble.png-73d06d791262b1a5724db6aec93651bf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/png/army/index.png"
-dest_files=["res://.godot/imported/index.png-0fb20c701b5325e331e37c07a635771a.ctex"]
+source_file="res://asset/png/civilian/noble.png"
+dest_files=["res://.godot/imported/noble.png-73d06d791262b1a5724db6aec93651bf.ctex"]
 
 [params]
 

@@ -1,0 +1,38 @@
+[
+ {
+  "title": "tiller",
+  "sin": "avarice",
+  "guild": "craftsman",
+  "price": 0,
+  "replica": 3,
+  "value": 3,
+  "resource": "supply"
+ },
+ {
+  "title": "hunter",
+  "sin": "avarice",
+  "guild": "craftsman",
+  "price": 0,
+  "replica": 1,
+  "value": 5,
+  "resource": "supply"
+ },
+ {
+  "title": "jester",
+  "sin": "greediness",
+  "guild": "artist",
+  "price": 0,
+  "replica": 4,
+  "value": 1,
+  "resource": "prestige"
+ },
+ {
+  "title": "bard",
+  "sin": "greed",
+  "guild": "artist",
+  "price": 0,
+  "replica": 2,
+  "value": 2,
+  "resource": "prestige"
+ }
+]

@@ -46,3 +46,8 @@ func reset() -> void:
 			var resource = get(subtype)
 			resource.set_value(0)
 #endregion
+
+
+func change_resource_value(subtype_: String, value_: int) -> void:
+	var resource = get(subtype_)
+	resource.change_value(value_)

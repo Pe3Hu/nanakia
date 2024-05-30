@@ -22,12 +22,12 @@ func set_attributes(input_: Dictionary) -> void:
 
 
 func init_basic_setting(input_: Dictionary) -> void:
-	var exceptions = []
+	var exceptions = ["cost"]
 	
-	if exceptions.has(type):
-		custom_minimum_size = Vector2(Global.vec.size[type])
+	if exceptions.has(subtype):
+		custom_minimum_size = Vector2(Global.vec.size[subtype])
 		size = custom_minimum_size
-		designation.visible = false
+		#designation.visible = false
 	else:
 		custom_minimum_size = Vector2(Global.vec.size.token)
 	
@@ -47,8 +47,8 @@ func init_basic_setting(input_: Dictionary) -> void:
 	
 	var font_size = Global.dict.font.size.basic
 	
-	if Global.dict.font.size.has(type):
-		font_size = Global.dict.font.size[type]
+	if Global.dict.font.size.has(subtype):
+		font_size = Global.dict.font.size[subtype]
 	
 	value.number.set("theme_override_font_sizes/font_size", font_size)
 	

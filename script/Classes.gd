@@ -332,3 +332,77 @@ class Conqueror:
 		area_.conqueror = null
 		areas.erase(area_)
 		god.society.consider_area(-1, area_)
+
+
+class Steward:
+	var god = null
+	var conqueror = null
+	var storage = null
+	var society = null
+
+
+	func _init(input_: Dictionary) -> void:
+		for key in input_:
+			set(key, input_[key])
+	
+		init_basic_setting()
+
+
+	func init_basic_setting() -> void:
+		conqueror = god.conqueror
+		storage = god.storage
+		society = god.society
+
+
+	func update_resources() -> void:
+		#tax_collection()
+		#provide_population()
+		var purposes = ["income", "expense"]
+		
+		for purpose in purposes:
+			var description = Global.dict.resource.purpose[purpose]
+			
+			for resource_title in description:
+				for meeple_title in description[resource_title]:
+					var multiplier = description[resource_title][meeple_title]
+					
+					match purpose:
+						"expense":
+							multiplier *= -1
+					
+					var meeple = society.get(meeple_title)
+					
+					if meeple != null:
+						var value = meeple.get_value() * multiplier
+						
+						if meeple_title == "beggar":
+							value = ceil(value)
+						else:
+							value = ceil(value)
+						
+						if value != 0:
+							storage.change_resource_value(resource_title, value)
+
+
+	func tax_collection() -> void:
+		var description = Global.dict.resource.purpose.income
+		
+		for resource_title in description:
+			for meeple_title in description[resource_title]:
+				var multiplier = description[resource_title][meeple_title]
+				var meeple = society.get(meeple_title)
+				var value = meeple.get_value() * multiplier
+				var resource = storage.get(resource_title)
+				resource.change_value(value)
+
+
+	func provide_population() -> void:
+		var description = Global.dict.resource.purpose.expense
+		
+		for resource_title in description:
+			for meeple_title in description[resource_title]:
+				var multiplier = description[resource_title][meeple_title]
+				var meeple = society.get(meeple_title)
+				var value = meeple.get_value() * multiplier
+				var resource = storage.get(resource_title)
+				resource.change_value(value)

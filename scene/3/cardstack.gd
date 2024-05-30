@@ -31,7 +31,8 @@ func reshuffle_all_cards() -> void:
 
 func advance_random_card() -> void:
 	refill_check()
-	var card = cards.get_children().pick_random()
+	var options = cards.get_children()
+	var card = options.pick_random()
 	card.advance_area()
 
 

@@ -57,7 +57,7 @@ layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Aristocrat" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
+[node name="Noble" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]
 layout_mode = 2
 
 [node name="Peasant" parent="VBox/Civilian" instance=ExtResource("2_blgv6")]

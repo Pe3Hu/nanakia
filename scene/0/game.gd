@@ -14,16 +14,21 @@ func _ready() -> void:
 
 func _input(event) -> void:
 	if event is InputEventKey:
+		var planet = sketch.universe.planets.get_child(0)
+		
 		match event.keycode:
 			KEY_A:
 				if event.is_pressed() && !event.is_echo():
-					var planet = sketch.universe.planets.get_child(0)
-					planet.mainland.shift_layer(-1)
+					planet.mainland.shift_layer("affiliation", -1)
 			KEY_D:
 				if event.is_pressed() && !event.is_echo():
-					var planet = sketch.universe.planets.get_child(0)
-					planet.mainland.shift_layer(1)
-
+					planet.mainland.shift_layer("affiliation", 1)
+			KEY_Q:
+				if event.is_pressed() && !event.is_echo():
+					planet.mainland.shift_layer("detail", -1)
+			KEY_E:
+				if event.is_pressed() && !event.is_echo():
+					planet.mainland.shift_layer("detail", 1)
 
 
 

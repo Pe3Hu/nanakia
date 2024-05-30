@@ -28,12 +28,12 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7paps")
 
 [node name="Cost" parent="." instance=ExtResource("1_fi7dm")]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
 [node name="Resources" type="VBoxContainer" parent="."]
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
+size_flags_horizontal = 0
+size_flags_vertical = 8
 theme_override_constants/separation = 0
 alignment = 1

@@ -34,7 +34,7 @@ theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 2
 
-[node name="Aristocrat" parent="Residents" instance=ExtResource("2_tx7nq")]
+[node name="Noble" parent="Residents" instance=ExtResource("2_tx7nq")]
 layout_mode = 2
 
 [node name="Peasant" parent="Residents" instance=ExtResource("2_tx7nq")]

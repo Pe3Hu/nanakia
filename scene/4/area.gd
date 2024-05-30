@@ -8,6 +8,7 @@ extends Polygon2D
 var mainland = null
 var grid = null
 var conqueror = null
+var index = null
 var neighbors = {}
 var trails = {}
 var areas = {}
@@ -38,6 +39,9 @@ func init_basic_setting() -> void:
 	
 		for key in Global.arr.state:
 			state[key] = null
+		
+		index = int(Global.num.index.area)
+		Global.num.index.area += 1
 	
 	set_vertexs()
 	set_remoteness()
@@ -66,7 +70,7 @@ func set_remoteness() -> void:
 
 
 func paint_based_on_garrison_index() -> void:
-	var h = float(garrison.index.get_value()) / Global.num.index.area
+	var h = float(index) / Global.num.index.area
 	var s = 0.75
 	var v = 1
 	var color_ = Color.from_hsv(h,s,v)
@@ -84,9 +88,29 @@ func paint_based_on_state_type_index(type_: String) -> void:
 		paint_gray()
 
 
+func paint_based_on_god_index() -> void:
+	if conqueror != null:
+		var h = float(conqueror.god.index) / Global.num.index.god
+		var s = 0.9
+		var v = 0.9
+		var color_ = Color.from_hsv(h,s,v)
+		set_color(color_)
+	else:
+		paint_gray()
+
+
 func paint_gray() -> void:
 	var color_ = Color.GRAY
 	set_color(color_)
+
+
+func set_detail(layer_: String) -> void:
+	for type in Global.arr.layer.detail:
+		var node = get(type)
+		node.visible = false
+		
+		if type == layer_:
+			node.visible = true
 #endregion
 
 

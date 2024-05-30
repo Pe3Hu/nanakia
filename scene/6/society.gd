@@ -9,7 +9,7 @@ extends MarginContainer
 @onready var skeleton = $VBox/Army/Skeleton
 @onready var werewolf = $VBox/Army/Werewolf
 @onready var vampire = $VBox/Army/Vampire
-@onready var aristocrat = $VBox/Civilian/Aristocrat
+@onready var noble = $VBox/Civilian/Noble
 @onready var peasant = $VBox/Civilian/Peasant
 @onready var beggar = $VBox/Civilian/Beggar
 @onready var slave = $VBox/Civilian/Slave

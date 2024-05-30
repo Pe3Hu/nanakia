@@ -23,8 +23,6 @@ func _ready() -> void:
 
 
 func init_arr() -> void:
-	arr.region = ["ne", "se", "sw", "nw", "nesw"]
-	arr.terrain = ["swamp", "forest", "mountain", "plain"]
 	arr.garrison = ["human", "ground", "sky"]
 	arr.state = ["earldom", "dukedom", "kingdom", "empire"]
 	arr.role = ["offensive", "defensive"]
@@ -33,7 +31,7 @@ func init_arr() -> void:
 	arr.ground = ["ghost", "skeleton"]
 	arr.sky = ["werewolf", "vampire"]
 	arr.army = ["militia", "ghost", "skeleton", "werewolf", "vampire"]
-	arr.civilian = ["aristocrat", "peasant", "beggar", "slave"]
+	arr.civilian = ["noble", "peasant", "beggar", "slave"]
 	arr.initiative = ["vampire", "werewolf", "skeleton", "ghost", "militia"]
 	
 	arr.resource = ["peaceful", "lethal"]
@@ -41,7 +39,8 @@ func init_arr() -> void:
 	arr.lethal = ["soul", "bone", "meat", "blood"]
 	
 	arr.layer = {}
-	arr.layer.mainland = ["area", "earldom", "dukedom", "kingdom"]
+	arr.layer.affiliation = ["area", "conqueror", "earldom", "dukedom", "kingdom"]
+	arr.layer.detail = ["garrison", "settlement"]
 
 
 func init_num() -> void:
@@ -49,6 +48,7 @@ func init_num() -> void:
 	num.index.area = 0
 	num.index.trail = 0
 	num.index.state = {}
+	num.index.god = 0
 	
 	for state in arr.state:
 		num.index.state[state] = 0
@@ -59,6 +59,7 @@ func init_num() -> void:
 	num.garrison = {}
 	num.garrison.a = num.troop.a * 2
 	num.garrison.r = num.garrison.a * sqrt(2)
+	num.garrison.base = 60
 	
 	num.mainland = {}
 	num.mainland.n = 9
@@ -80,7 +81,7 @@ func init_num() -> void:
 	num.hand.n = 4
 	
 	num.settlement = {}
-	num.settlement.aristocrat = 1.0 / 10
+	num.settlement.noble = 1.0 / 10
 
 
 func init_dict() -> void:
@@ -90,6 +91,8 @@ func init_dict() -> void:
 	init_corner()
 	
 	init_dice()
+	init_resource()
+	init_deck()
 
 
 func init_direction() -> void:
@@ -196,23 +199,25 @@ func init_corner() -> void:
 
 
 func init_dice() -> void:
+	dict.kind = {}
+	dict.kind.power = {}
 	dict.dice = {}
 	dict.dice.kind = {}
-	var exceptions = ["kind"]
+	var exceptions = ["title"]
 	
 	var path = "res://asset/json/nanakia_dice.json"
 	var array = load_data(path)
 	
 	for dice in array:
+		dict.kind.power[dice.title] = 0
 		var data = {}
 		
 		for key in dice:
 			if !exceptions.has(key) and dice[key] > 0:
 				data[int(key)] = dice[key]
+				dict.kind.power[dice.title] += int(key) * dice[key]
 	
-		dict.dice.kind[dice.kind] = data
-		
-	dict.kind = {}
+		dict.dice.kind[dice.title] = data
 	
 	dict.kind.troop = {}
 	dict.kind.troop["militia"] = "human"
@@ -234,8 +239,57 @@ func init_dice() -> void:
 	dict.role.opponent["defensive"] = "offensive"
 
 
+func init_resource() -> void:
+	dict.resource = {}
+	dict.resource.purpose = {}
+	#var exceptions = ["title"]
+	
+	var path = "res://asset/json/nanakia_resource.json"
+	var array = load_data(path)
+	
+	for resource in array:
+		#var data = {}
+		
+		#for key in resource:
+		#	data[key] = resource[key]
+		
+		if !dict.resource.purpose.has(resource.purpose):
+			dict.resource.purpose[resource.purpose] = {}
+		
+		if !dict.resource.purpose[resource.purpose].has(resource.subtype):
+			dict.resource.purpose[resource.purpose][resource.subtype] = {}
+		
+		dict.resource.purpose[resource.purpose][resource.subtype][resource.title] = resource.value
+	
+		#dict.resource.title[resource.title] = data
+
+
+func init_deck() -> void:
+	dict.deck = {}
+	dict.deck.price = {}
+	dict.deck.title = {}
+	
+	var path = "res://asset/json/nanakia_deck.json"
+	var array = load_data(path)
+	
+	for deck in array:
+		deck.price = int(deck.price)
+		var data = {}
+		
+		for key in deck:
+			data[key] = deck[key]
+	
+		dict.deck.title[deck.title] = data
+		
+		if !dict.deck.price.has(deck.price):
+			dict.deck.price[deck.price] = []
+		
+		dict.deck.price[deck.price].append(data)
+
+
 func init_scene() -> void:
 	scene.token = load("res://scene/0/token.tscn")
+	scene.couple = load("res://scene/0/couple.tscn")
 	
 	scene.pantheon = load("res://scene/1/pantheon.tscn")
 	scene.god = load("res://scene/1/god.tscn")
@@ -260,8 +314,6 @@ func init_vec():
 	vec.size.number = Vector2(vec.size.sixteen)
 	
 	vec.size.token = Vector2(32, 32)
-	vec.size.card = Vector2(vec.size.token.x * 2, vec.size.token.y * 4)
-	vec.size.gameboard = Vector2(vec.size.token)# * 6, vec.size.token.y * 5)
 	
 	vec.size.garrison = Vector2.ONE * num.garrison.a
 	vec.size.mainland = vec.size.garrison * 2 + (Vector2(Global.num.mainland.col, Global.num.mainland.row) - Vector2.ONE) * num.mainland.a
@@ -273,6 +325,9 @@ func init_vec():
 	vec.size.encounter = Vector2(vec.size.facet.x * (2 * n + 1), vec.size.facet.y * n)
 	
 	vec.size.couple = Vector2(vec.size.token) * 0.75
+	vec.size.cost = Vector2(vec.size.token) * 0.75
+	vec.size.card = Vector2(vec.size.couple.x + vec.size.cost.x, vec.size.couple.y * 2)
+	vec.size.gameboard = Vector2(vec.size.card.x * 5, vec.size.card.y)# * 6, vec.size.token.y * 5)
 	
 	init_window_size()
 
@@ -299,7 +354,7 @@ func init_font():
 	dict.font.size = {}
 	dict.font.size["basic"] = 18
 	dict.font.size["aspect"] = 24
-	dict.font.size["card"] = 24
+	dict.font.size["cost"] = 18
 	dict.font.size["season"] = 18
 	dict.font.size["phase"] = 18
 	dict.font.size["moon"] = 18

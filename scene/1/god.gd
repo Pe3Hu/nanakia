@@ -9,7 +9,9 @@ extends MarginContainer
 var pantheon = null
 var planet = null
 var conqueror = null
+var steward = null
 var opponents = []
+var index = null
 #endregion
 
 
@@ -27,6 +29,10 @@ func init_basic_setting() -> void:
 	society.set_attributes(input)
 	storage.set_attributes(input)
 	conqueror = Classes.Conqueror.new(input)
+	steward = Classes.Steward.new(input)
+	
+	index = int(Global.num.index.god)
+	Global.num.index.god += 1
 #endregion
 
 

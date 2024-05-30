@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vp4bbdugpoiy"
-path="res://.godot/imported/aristocrat.png-98a0688758903a3518dc4a84281793b5.ctex"
+uid="uid://cq0cugxua58kp"
+path="res://.godot/imported/power.png-0f22c5a29c6d3f5d295005988a4ae44b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/png/civilian/aristocrat.png"
-dest_files=["res://.godot/imported/aristocrat.png-98a0688758903a3518dc4a84281793b5.ctex"]
+source_file="res://asset/png/army/power.png"
+dest_files=["res://.godot/imported/power.png-0f22c5a29c6d3f5d295005988a4ae44b.ctex"]
 
 [params]
 

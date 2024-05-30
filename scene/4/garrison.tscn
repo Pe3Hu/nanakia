@@ -34,7 +34,7 @@ theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 2
 
-[node name="Index" parent="Troops" instance=ExtResource("2_cc6yj")]
+[node name="Power" parent="Troops" instance=ExtResource("2_cc6yj")]
 layout_mode = 2
 
 [node name="Human" parent="Troops" instance=ExtResource("2_cc6yj")]

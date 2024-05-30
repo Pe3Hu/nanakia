@@ -21,7 +21,7 @@ func set_attributes(input_: Dictionary) -> void:
 
 
 func init_basic_setting(input_: Dictionary) -> void:
-	custom_minimum_size = Global.vec.size.card.market
+	custom_minimum_size = Global.vec.size.card
 	init_tokens(input_)
 	init_bg()
 
@@ -40,9 +40,9 @@ func init_tokens(input_: Dictionary) -> void:
 		input.subtype = subtype
 		input.value = input_.resources[subtype]
 		
-		var token = Global.scene.token.instantiate()
-		resources.add_child(token)
-		token.set_attributes(input)
+		var couple = Global.scene.couple.instantiate()
+		resources.add_child(couple)
+		couple.set_attributes(input)
 
 
 func init_bg() -> void:
@@ -82,9 +82,6 @@ func set_gameboard_as_proprietor(gameboard_: MarginContainer) -> void:
 	cardstack = proprietor.get(area)
 	cardstack.cards.add_child(self)
 	
-	cost.visible = false
-	custom_minimum_size = Global.vec.size.card.gameboard
-	size = Global.vec.size.card.gameboard
 	set_selected(false)
 	
 	if !market:
@@ -96,3 +93,13 @@ func set_selected(selected_: bool) -> void:
 	var style = bg.get("theme_override_styles/panel")
 	style.bg_color = Global.color.card.selected[selected_]
 #endregion
+
+
+func move_resources_into_storage() -> void:
+	var storage = proprietor.god.storage
+	
+	for couple in resources.get_children():
+		var subtype = couple.designation.subtype
+		var value = couple.get_value()
+		
+		storage.change_resource_value(subtype, value)

@@ -2,7 +2,7 @@ extends MarginContainer
 
 
 #region vars
-@onready var aristocrat = $Residents/Aristocrat
+@onready var noble = $Residents/Noble
 @onready var peasant = $Residents/Peasant
 @onready var beggar= $Residents/Beggar
 @onready var slave = $Residents/Slave
@@ -62,3 +62,28 @@ func elevator(from_: String, where_: String) -> void:
 	resident.from.change_value(-value)
 	resident.where.change_value(value)
 #endregion
+
+
+func add_migrants() -> void:
+	Global.rng.randomize()
+	var limit = floor(sqrt(population))
+	limit += Global.rng.randi_range(-1, 1)
+	var weights = {}
+	weights["noble"] = 1
+	weights["peasant"] = 6
+	weights["beggar"] = 2
+	#weights["slave"] = 0
+	
+	while limit > 0:
+		var kind = Global.get_random_key(weights)
+		Global.rng.randomize()
+		var value = Global.rng.randi_range(1, ceil(float(limit) / 3))
+		change_resident_value(kind, value)
+		limit -= value
+	
+	while population * Global.num.settlement.noble < noble.get_value():
+		area.settlement.elevator("noble", "peasant")
+
+
+func harvest_resources() -> void:
+	pass

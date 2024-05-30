@@ -17,7 +17,7 @@ var dukedoms = []
 var kingdoms = []
 var empires = []
 var challenges = []
-var layer = 0
+var layer = {}
 var corners = {}
 var liberty = null
 var reset = false
@@ -42,8 +42,11 @@ func init_basic_setting() -> void:
 	refill_settlements()
 	init_challenges()
 	
-	layer = Global.arr.state[2]
-	shift_layer(0)
+	layer = {}
+	layer.affiliation = Global.arr.layer.affiliation[1]
+	layer.detail = Global.arr.layer.detail[0]
+	shift_layer("affiliation", 0)
+	shift_layer("detail", 0)
 
 
 func init_offsets() -> void:
@@ -279,7 +282,7 @@ func refill_garrisons() -> void:
 
 
 func random_fill_garrison(garrison_: MarginContainer) -> void:
-	var limit = 30
+	var limit = int(Global.num.garrison.base)
 	var kinds = {}
 	
 	for type in Global.arr.garrison:
@@ -290,16 +293,47 @@ func random_fill_garrison(garrison_: MarginContainer) -> void:
 		if kind != "human":
 			garrison_.set_troop_value(kind, 0)
 	
-	while limit > 0:
+	while limit > 0 and !kinds.is_empty():
 		var kind = kinds.keys().pick_random()#Global.get_random_key(kinds)
+		var power = Global.dict.kind.power[kind]
 		
-		if limit >= kinds[kind]:
-			limit -= kinds[kind]
-			garrison_.change_troop_value(kind, 1)
+		if limit >= power:
+			Global.rng.randomize()
+			var value = Global.rng.randi_range(1, 3)
+			value = min(floor(float(limit)/power), value)
+			
+			limit -= value * power
+			garrison_.change_troop_value(kind, value)
 		else:
 			kinds.erase(kind)
+	
+	balance_militia_garrison(garrison_)
+
+
+func balance_militia_garrison(garrison_: MarginContainer) -> void:
+	if garrison_.balance < 0:
+		var types = ["ground", "sky"]
+		var base = 12
+		var weights = {}
+			
+		for type in types:
+			var troop = garrison_.get(type)
+			
+			if garrison_.get_troop_value(troop.subtype) > 0:
+				weights[troop.subtype] = base - Global.dict.kind.power[troop.subtype]
 		
-		#print([garrison_.index.get_value(), kind, limit])
+		while garrison_.balance < 0 and !weights.keys().is_empty():
+			var kind = Global.get_random_key(weights)
+			garrison_.change_troop_value(kind, -1)
+			garrison_.change_troop_value("militia", 1)
+			
+			if garrison_.get_troop_value(kind) == 0:
+				weights.erase(kind)
+		
+		var reinforcement = floor((Global.num.garrison.base - garrison_.get_power_value()) / Global.dict.kind.power["militia"])
+		garrison_.change_troop_value("militia", reinforcement)
+
+
 
 
 func refill_settlements() -> void:
@@ -310,7 +344,7 @@ func refill_settlements() -> void:
 func random_fill_state_settlements(state_: Classes.State) -> void:
 	var limit = 100
 	var weights = {}
-	weights["aristocrat"] = 2
+	weights["noble"] = 2
 	weights["peasant"] = 9
 	weights["beggar"] = 3
 	weights["slave"] = 1
@@ -329,8 +363,8 @@ func random_fill_state_settlements(state_: Classes.State) -> void:
 		limit -= value
 	
 	for area in state_.areas:
-		while area.settlement.population * Global.num.settlement.aristocrat < area.settlement.aristocrat.get_value():
-			area.settlement.elevator("aristocrat", "peasant")
+		while area.settlement.population * Global.num.settlement.noble < area.settlement.noble.get_value():
+			area.settlement.elevator("noble", "peasant")
 
 
 func init_challenges() -> void:
@@ -401,12 +435,6 @@ func reset_states() -> void:
 		while !_states.is_empty():
 			var state = _states.front()
 			state.crush()
-
-
-func do_dukedom():
-	var type = Global.arr.state[1]
-	add_new_senor(type)
-	shift_layer(0)
 
 
 func lay_foundation_of_states(type_: String) -> void:
@@ -601,49 +629,33 @@ func absorb_smaller_empires() -> void:
 
 
 #region paint
-func shift_layer(shift_: int) -> void:
-	var index = 9 
+func shift_layer(subtype_: String, shift_: int) -> void:
+	var index = 0
 	
 	if layer != null:
-		index = Global.arr.layer.mainland.find(layer)
-		index = (index + shift_ + Global.arr.layer.mainland.size()) % Global.arr.layer.mainland.size()
+		index = Global.arr.layer[subtype_].find(layer[subtype_])
+		index = (index + shift_ + Global.arr.layer[subtype_].size()) % Global.arr.layer[subtype_].size()
 	
-	layer = Global.arr.layer.mainland[index]
-	
-	#for knob in knobs.get_children():
-		#if knob.type == "hub" :
-			#knob.visible = false
-		#else:
-			#if knob.type != "lair" and knob.type != "capital":
-				#knob.visible = false
+	layer[subtype_] = Global.arr.layer[subtype_][index]
 	
 	for area in areas.get_children():
-		match layer:
-			"area":
-				area.paint_based_on_garrison_index()
-			"earldom":
-				area.paint_based_on_state_type_index(layer)
-			"dukedom":
-				area.paint_based_on_state_type_index(layer)
-			"kingdom":
-				area.paint_based_on_state_type_index(layer)
-			"empire":
-				area.paint_based_on_state_type_index(layer)
-			#"realm":
-				#area.paint_based_on_terrain()
-				##area.paint_based_on_realm_terrain()
-	#
-	#for seam in seams.get_children():
-		#if Global.arr.state.has(layer):
-			#seam.visible = seam.boundary.state[layer]
-		#else:
-##			if layer == "terrain":
-##				seam.visible = !seam.boundary.realms.is_empty()
-##			else:
-			#if layer == "realm":
-				#seam.visible = !seam.boundary.realms.is_empty()
-			#else:
-				#seam.visible = seam.boundary.area
+		match subtype_:
+			"affiliation":
+				match layer[subtype_]:
+					"area":
+						area.paint_based_on_garrison_index()
+					"conqueror":
+						area.paint_based_on_god_index()
+					"earldom":
+						area.paint_based_on_state_type_index(layer[subtype_])
+					"dukedom":
+						area.paint_based_on_state_type_index(layer[subtype_])
+					"kingdom":
+						area.paint_based_on_state_type_index(layer[subtype_])
+					"empire":
+						area.paint_based_on_state_type_index(layer[subtype_])
+			"detail":
+				area.set_detail(layer[subtype_])
 
 
 func paint_areas(layer_: String) -> void:
