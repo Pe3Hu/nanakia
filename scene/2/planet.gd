@@ -81,6 +81,7 @@ func init_gods_areas() -> void:
 		var area = earldom.areas.pick_random()
 		god.conqueror.annex_area(area)
 		
+		god.storage.refill_authority()
 		god.gameboard.refill_hand()
 		#god.steward.update_resources()
 	

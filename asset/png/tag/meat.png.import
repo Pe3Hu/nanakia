@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bi0nbbpm648rp"
-path="res://.godot/imported/prestige.png-b6cc94232c7f2a1dab415a485b61406d.ctex"
+uid="uid://ir7rbbcbtwhs"
+path="res://.godot/imported/meat.png-cbe4bb5bba3b701b5bc76cdb67f32b00.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/png/resource/prestige.png"
-dest_files=["res://.godot/imported/prestige.png-b6cc94232c7f2a1dab415a485b61406d.ctex"]
+source_file="res://asset/png/tag/meat.png"
+dest_files=["res://.godot/imported/meat.png-cbe4bb5bba3b701b5bc76cdb67f32b00.ctex"]
 
 [params]
 

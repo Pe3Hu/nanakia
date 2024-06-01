@@ -43,6 +43,7 @@ func init_basic_setting(input_: Dictionary) -> void:
 		font_size = Global.dict.font.size[type]
 	
 	value.number.set("theme_override_font_sizes/font_size", font_size)
+	init_bg()
 
 
 func init_bg() -> void:

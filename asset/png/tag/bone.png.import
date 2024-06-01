@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b81cmqatnm1sp"
-path="res://.godot/imported/gold.png-dc1e1093f914f50c56fcb887776b7dd3.ctex"
+uid="uid://b5p1qglbxvxs2"
+path="res://.godot/imported/bone.png-a20217858b952c3b1f04ca39ccc84ee0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/png/resource/gold.png"
-dest_files=["res://.godot/imported/gold.png-dc1e1093f914f50c56fcb887776b7dd3.ctex"]
+source_file="res://asset/png/tag/bone.png"
+dest_files=["res://.godot/imported/bone.png-a20217858b952c3b1f04ca39ccc84ee0.ctex"]
 
 [params]
 

@@ -34,9 +34,11 @@ func init_arr() -> void:
 	arr.civilian = ["noble", "peasant", "beggar", "slave"]
 	arr.initiative = ["vampire", "werewolf", "skeleton", "ghost", "militia"]
 	
-	arr.resource = ["peaceful", "lethal"]
+	arr.resource = ["peaceful", "lethal", "authority"]
 	arr.peaceful = ["prestige", "glory", "supply", "gold"]
 	arr.lethal = ["soul", "bone", "meat", "blood"]
+	arr.authority = ["request", "order"]
+	arr.victim = ["noble", "peasant", "beggar", "slave", "militia"]
 	
 	arr.layer = {}
 	arr.layer.affiliation = ["area", "conqueror", "earldom", "dukedom", "kingdom"]
@@ -92,7 +94,7 @@ func init_dict() -> void:
 	
 	init_dice()
 	init_resource()
-	init_deck()
+	init_card()
 
 
 func init_direction() -> void:
@@ -264,27 +266,42 @@ func init_resource() -> void:
 		#dict.resource.title[resource.title] = data
 
 
-func init_deck() -> void:
-	dict.deck = {}
-	dict.deck.price = {}
-	dict.deck.title = {}
+func init_card() -> void:
+	dict.card = {}
+	dict.card.rarity = {}
 	
-	var path = "res://asset/json/nanakia_deck.json"
+	var path = "res://asset/json/nanakia_card.json"
 	var array = load_data(path)
+	var exceptions = ["rarity", "sin", "title", "specialty", "authority"]
 	
-	for deck in array:
-		deck.price = int(deck.price)
+	for card in array:
 		var data = {}
+		data.victim = {}
 		
-		for key in deck:
-			data[key] = deck[key]
+		for key in card:
+			if !exceptions.has(key):
+				if !arr.victim.has(key):
+					data[key] = card[key]
+				else:
+					data.victim[key] = card[key]
+		
+		if data.victim.keys().is_empty():
+			data.erase("victim")
+		
+		if !dict.card.rarity.has(card.rarity):
+			dict.card.rarity[card.rarity] = {}
+		
+		if !dict.card.rarity[card.rarity].has(card.sin):
+			dict.card.rarity[card.rarity][card.sin] = {}
+		
+		if !dict.card.rarity[card.rarity][card.sin].has(card.title):
+			dict.card.rarity[card.rarity][card.sin][card.title] = {}
+		
+		if !dict.card.rarity[card.rarity][card.sin][card.title].has(card.specialty):
+			dict.card.rarity[card.rarity][card.sin][card.title][card.specialty] = {}
+		
+		dict.card.rarity[card.rarity][card.sin][card.title][card.specialty][card.authority] = data
 	
-		dict.deck.title[deck.title] = data
-		
-		if !dict.deck.price.has(deck.price):
-			dict.deck.price[deck.price] = []
-		
-		dict.deck.price[deck.price].append(data)
 
 
 func init_scene() -> void:
@@ -298,6 +315,7 @@ func init_scene() -> void:
 	scene.mainland = load("res://scene/2/mainland.tscn")
 	
 	scene.card = load("res://scene/3/card.tscn")
+	scene.skill = load("res://scene/3/skill.tscn")
 	
 	scene.area = load("res://scene/4/area.tscn")
 	scene.trail = load("res://scene/4/trail.tscn")
@@ -327,6 +345,7 @@ func init_vec():
 	vec.size.couple = Vector2(vec.size.token) * 0.75
 	vec.size.cost = Vector2(vec.size.token) * 0.75
 	vec.size.card = Vector2(vec.size.couple.x + vec.size.cost.x, vec.size.couple.y * 2)
+	vec.size.skill = Vector2(vec.size.token) 
 	vec.size.gameboard = Vector2(vec.size.card.x * 5, vec.size.card.y)# * 6, vec.size.token.y * 5)
 	
 	init_window_size()
@@ -347,6 +366,9 @@ func init_color():
 	color.card.selected[true] = Color.from_hsv(160 / h, 0.4, 0.7)
 	color.card.selected[false] = Color.from_hsv(60 / h, 0.2, 0.9)
 	
+	color.card.profit = {}
+	color.card.profit[true] = Color.from_hsv(120 / h, 0.4, 0.7)
+	color.card.profit[false] = Color.from_hsv(0 / h, 0.2, 0.9)
 
 
 func init_font():

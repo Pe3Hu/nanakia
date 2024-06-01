@@ -4,7 +4,7 @@ extends MarginContainer
 #region vars
 @onready var bg = $BG
 @onready var cost = $Cost
-@onready var resources = $Resources
+@onready var skills = $Skills
 
 var proprietor = null
 var area = null
@@ -34,15 +34,21 @@ func init_tokens(input_: Dictionary) -> void:
 	input.value = input_.cost
 	cost.set_attributes(input)
 	
-	input.type = "resource"
+	input = {}
+	input.card = self
 	
-	for subtype in input_.resources:
-		input.subtype = subtype
-		input.value = input_.resources[subtype]
+	for authority in input_.authorities:
+		input.authority = authority
+		input.promotion = input_.authorities[authority].promotion
+		input.tag = input_.authorities[authority].tag
+		input.value = input_.authorities[authority].value
 		
-		var couple = Global.scene.couple.instantiate()
-		resources.add_child(couple)
-		couple.set_attributes(input)
+		if input_.authorities[authority].has("penalty"):
+			input.penalty = input_.authorities[authority].penalty
+		
+		var skill = Global.scene.skill.instantiate()
+		skills.add_child(skill)
+		skill.set_attributes(input)
 
 
 func init_bg() -> void:
@@ -98,8 +104,8 @@ func set_selected(selected_: bool) -> void:
 func move_resources_into_storage() -> void:
 	var storage = proprietor.god.storage
 	
-	for couple in resources.get_children():
-		var subtype = couple.designation.subtype
-		var value = couple.get_value()
+	for  skill in skills.get_children():
+		var subtype =  skill.tag.designation.subtype
+		var value =  skill.tag.get_value()
 		
 		storage.change_resource_value(subtype, value)

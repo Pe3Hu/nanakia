@@ -41,33 +41,38 @@ func init_cardstacks() -> void:
 
 
 func init_starter_kit_cards() -> void:
-	for description in Global.dict.deck.price[0]:
-		for _i in description.replica:
-			add_card(description)
+	for sin in Global.dict.card.rarity["common"]:
+		for title in Global.dict.card.rarity["common"][sin]:
+			for specialty in Global.dict.card.rarity["common"][sin][title]:
+				var description = Global.dict.card.rarity["common"][sin][title][specialty]
+				
+				for _i in description.request.replica:
+					var input = {}
+					input.sin = sin
+					input.title = title
+					input.specialty = specialty
+					input.description = description
+					add_card(input)
 	
 	discharged.reshuffle_all_cards()
+
+
+func add_card(input_: Dictionary) -> void:
+	input_.proprietor = self
+	input_.area = "discharged"
+	input_.cost = 0
+	input_.authorities = {}
 	
-	#for type in Global.dict.area.next:
-		#if type != null:
-			#var cardstack = get(type)
-			#print([type, cardstack.cards.get_child_count()])
-
-
-func add_card(description_: Dictionary) -> void:
-	var input = {}
-	input.proprietor = self
-	input.area = "discharged"
-	input.cost = description_.price
-	input.resources = {}
-	#var data = {}
-	#data.subtype = description_.resource
-	#data.value = description_.value
-	#input.resources.append(data)
-	input.resources[description_.resource] = description_.value
+	for authority in input_.description:
+		#var data = {}
+		#data.subtype = description_.resource
+		#data.value = description_.value
+		#input.resources.append(data)
+		input_.authorities[authority] = input_.description[authority]
 
 	var card = Global.scene.card.instantiate()
 	discharged.cards.add_child(card)
-	card.set_attributes(input)
+	card.set_attributes(input_)
 	card.set_gameboard_as_proprietor(self)
 #endregion
 
